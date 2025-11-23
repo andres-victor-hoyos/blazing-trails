@@ -10,16 +10,18 @@
 }
 else
 {
+    <TrailDetails Trail="_selectedTrail"></TrailDetails>
     <div class="grid">
         @foreach (var trail in _trails)
         {
-            <TrailCard Trail=trail></TrailCard>
+            <TrailCard Trail="trail" OnSelected="HandleTrailSelected"/>
         }
     </div>
 }
 
 @code {
     private IEnumerable<Trail>? _trails;
+    private Trail _selectedTrail;
     const string URL_TRAILS = "trails/trail-data.json";
     protected override async Task OnInitializedAsync()
     {
@@ -33,4 +35,6 @@ else
             Console.WriteLine($"There was a problem loading trail data: {ex.Message}");
         }
     }
+
+    private void HandleTrailSelected(Trail t) => _selectedTrail =t; 
 }

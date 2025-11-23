@@ -1,4 +1,4 @@
-<div class="drawer-wrapper">
+<div class="drawer-wrapper @(_isOpen ? "slide" : "")">
     <div class="drawer-mask"></div>
     <div class="drawer">
         @if (_activeTrail is not null)
@@ -40,12 +40,14 @@
 
     protected override void OnParametersSet()
     {
-        if(Trail !=null){
+        if (Trail != null)
+        {
             _activeTrail = Trail;
             _isOpen = true;
         }
     }
-    public void Close(){
+    public void Close()
+    {
         _activeTrail = null;
         _isOpen = false;
     }

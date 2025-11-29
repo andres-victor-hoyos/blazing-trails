@@ -1,0 +1,7 @@
+.jubotron{
+    background:none;
+}
+
+.jubotron input{
+    border:2px sodid var(--brand);
+}

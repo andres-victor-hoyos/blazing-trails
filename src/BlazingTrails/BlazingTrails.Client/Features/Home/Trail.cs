@@ -24,6 +24,17 @@ public class Trail
     {
         return Contains(() => this.Location!, filter) || Contains(() => this.Name!, filter);
     }
+
+    public bool LengthLessThan(int maxlength)
+    {
+        return Length <= maxlength;
+    }
+
+
+    public bool TimeLessThan(int? maxTimeHours)
+    {
+        return TimeInMinutes <= (maxTimeHours*60);
+    }
 }
 
 public class RouteInstruction

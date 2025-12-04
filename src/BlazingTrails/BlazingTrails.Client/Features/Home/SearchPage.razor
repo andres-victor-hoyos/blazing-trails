@@ -1,4 +1,7 @@
 @page "/search/{SearchTerm}"
+@using System.IO.Compression
+@using System.Runtime.CompilerServices
+@using System.Data
 @inject HttpClient Http;
 @inject NavigationManager NavManager
 <PageTitle>Search Trails - Blazing Trails</PageTitle>
@@ -13,39 +16,79 @@
 </nav>
 
 <h3 class="mt-5 mb-4">Search results for "@SearchTerm"</h3>
+<SearchFilter SearchTerm="@SearchTerm"></SearchFilter>
 
-@if (_searchResults == null)
+@if (searchResults == null)
 {
     <p>Loading search results</p>
 }
 else
 {
-    <TrailDetails Trail="_selectedTrail" />
+    <TrailDetails Trail="selectedTrail" />
     <div class="grid">
-        @foreach(var trail in _searchResults){
+        @foreach (var trail in searchResults)
+        {
             <TrailCard Trail="trail" OnSelected="HandleTrailSelected"></TrailCard>
         }
     </div>
 }
 
 @code {
-    private IEnumerable<Trail>? _searchResults;
-    private Trail? _selectedTrail;
+    private IEnumerable<Trail>? searchResults;
+    private Trail? selectedTrail;
+    private IEnumerable<Trail> cachedSearchResults;
 
     [Parameter]
     public string? SearchTerm { get; set; } = default;
 
-    protected override async Task OnInitializedAsync(){
-        try{
+    [Parameter, SupplyParameterFromQuery]
+    public int? MaxLength { get; set; }
+
+    [Parameter, SupplyParameterFromQuery]
+    public int? MaxTime { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
             var allTrails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json");
-            _searchResults = allTrails!.Where(x=>x.Contains(SearchTerm!));
+            searchResults = allTrails!.Where(x => x.Contains(SearchTerm!));
+            cachedSearchResults = searchResults;
 
         }
-        catch(HttpRequestException ex){
+        catch (HttpRequestException ex)
+        {
             Console.WriteLine($"There was a problem loading trail data:{ex.Message}");
         }
     }
 
-    private void HandleTrailSelected(Trail trail)=>_selectedTrail=trail;
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine("OnParameterSet ");
+        UpdateFilters();
+    }
+
+    private void UpdateFilters()
+    {
+        Console.WriteLine($"{MaxLength}-{MaxTime}");
+        var filters = new List<Func<Trail, bool>>();
+        if (MaxLength.HasValue && MaxLength > 0)
+        {
+            filters.Add(x => x.LengthLessThan(MaxLength!.Value));
+        }
+        if (MaxTime.HasValue && MaxTime > 0)
+        {
+            filters.Add(x => x.TimeLessThan(MaxTime.Value));
+        }
+        if (filters.Any())
+        {
+            searchResults = cachedSearchResults.Where(trail => filters.All(filter => filter(trail)));
+        }
+        else
+        {
+            searchResults = cachedSearchResults;
+        }
+
+    }
+    private void HandleTrailSelected(Trail trail) => selectedTrail = trail;
 
 }

@@ -5,7 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BlazingTrails", "BlazingTrails", "{ABC08977-CFAE-E8FB-FA79-04FB29A6AB9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingTrails.Client", "BlazingTrails\BlazingTrails.Client\BlazingTrails.Client.csproj", "{2C1A59D1-88E5-4904-98C4-A226AF4340AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingTrails.Client", "BlazingTrails.Client\BlazingTrails.Client.csproj", "{2C1A59D1-88E5-4904-98C4-A226AF4340AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingTrails.Api", "BlazingTrails.Api\BlazingTrails.Api.csproj", "{AFE24D20-9F45-4B20-B711-98D9682E521F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingTrails.Shared", "BlazingTrails.Shared\BlazingTrails.Shared.csproj", "{706D136D-6746-42F7-BEE9-F35979B030DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +33,30 @@ Global
 		{2C1A59D1-88E5-4904-98C4-A226AF4340AC}.Release|x64.Build.0 = Release|Any CPU
 		{2C1A59D1-88E5-4904-98C4-A226AF4340AC}.Release|x86.ActiveCfg = Release|Any CPU
 		{2C1A59D1-88E5-4904-98C4-A226AF4340AC}.Release|x86.Build.0 = Release|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Debug|x64.Build.0 = Debug|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Debug|x86.Build.0 = Debug|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Release|x64.ActiveCfg = Release|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Release|x64.Build.0 = Release|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Release|x86.ActiveCfg = Release|Any CPU
+		{AFE24D20-9F45-4B20-B711-98D9682E521F}.Release|x86.Build.0 = Release|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Debug|x64.Build.0 = Debug|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Debug|x86.Build.0 = Debug|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Release|x64.ActiveCfg = Release|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Release|x64.Build.0 = Release|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Release|x86.ActiveCfg = Release|Any CPU
+		{706D136D-6746-42F7-BEE9-F35979B030DB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

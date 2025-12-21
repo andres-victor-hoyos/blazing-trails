@@ -1,15 +1,20 @@
+using System.Reflection;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<BlazingTrails.Client.App>();
+builder.Services.AddControllers();
 builder.Services.AddDbContext<BlazingTrailsContext>(
     options =>
     {
         options.UseSqlite(builder.Configuration.GetConnectionString("BlazingTrailsContext"));
     }
 );
+builder.Services.AddMediatR(cfg=>cfg.RegisterServicesFromAssembly(Assembly.GetEntryAssembly()!));
+builder.Services.AddFluentValidationAutoValidation();
 var app = builder.Build();
 if(!app.Environment.IsDevelopment()){
     app.UseExceptionHandler();
@@ -20,5 +25,6 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapBlazorHub();
+app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();

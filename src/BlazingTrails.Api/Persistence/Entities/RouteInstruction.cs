@@ -8,8 +8,8 @@ public class RouteInstruction
     public int Id { get; set; }
     public int TrailId { get; set; }
     public int Stage {get;set;}
-    public string Description { get; set; }
-    public Trail Trail{get;set;} = default;
+    public string? Description { get; set; }
+    public Trail Trail{get;set;} = default!;
 }
 
 public class RouteInstructionConfiguration : IEntityTypeConfiguration<RouteInstruction>

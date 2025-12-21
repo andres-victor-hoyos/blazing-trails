@@ -373,3 +373,6 @@ blazor.boot.json
 
 # Static Web Assets
 staticwebassets/
+
+# Local SQLite database (do not version)
+/src/BlazingTrails.Api/Persistence/Data/blazingtrails.db

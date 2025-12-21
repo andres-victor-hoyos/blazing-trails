@@ -27,4 +27,7 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+Console.WriteLine("Server was started");
+
 app.Run();

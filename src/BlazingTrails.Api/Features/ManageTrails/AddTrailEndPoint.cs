@@ -15,21 +15,26 @@ public class AddTrailEndPoint : EndpointBaseAsync.WithRequest<AddTrailRequest>.W
     [HttpPost(AddTrailRequest.RouteTemplate)]
     public override async Task<int> HandleAsync(AddTrailRequest request, CancellationToken cancellationToken = default)
     {
+
+
         var trail = new Trail
         {
             Name = request.Trail.Name,
             Description = request.Trail.Description,
             Location = request.Trail.Location,
             TimeInMinutes = request.Trail.TimeInMinutes,
-            Length =  request.Trail.Length
+            Length = request.Trail.Length      
         };
-        await _database.Trails.AddAsync(trail, cancellationToken);
-        var RouteInstruction = request.Trail.Route.Select(x=>new RouteInstruction
+
+        trail.Route = request.Trail.Route.Select(x => new RouteInstruction
         {
-           Stage = x.Stage,
-           Description = x.Description,
-           Trail = trail, 
-        });
+            Stage = x.Stage,
+            Description = x.Description,
+            Trail = trail
+        }).ToList();
+
+        await _database.Trails.AddAsync(trail, cancellationToken);
+
         await _database.SaveChangesAsync(cancellationToken);
         return trail.Id;
     }

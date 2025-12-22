@@ -75,13 +75,3 @@ a:hover {
 .validation-message {
     color: red;
 }
-
-input.invalid,
-textarea.invalid,
-select.invalid {
-    border-color: red;
-}
-
-select.valid.modified {
-    border-color: green;
-}

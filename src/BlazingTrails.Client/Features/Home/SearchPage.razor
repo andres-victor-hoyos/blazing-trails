@@ -36,7 +36,7 @@ else
 @code {
     private IEnumerable<Trail>? searchResults;
     private Trail? selectedTrail;
-    private IEnumerable<Trail> cachedSearchResults;
+    private IEnumerable<Trail> cachedSearchResults = Enumerable.Empty<Trail>();
 
     [Parameter]
     public string? SearchTerm { get; set; } = default;

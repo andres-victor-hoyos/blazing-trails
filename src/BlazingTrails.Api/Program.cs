@@ -1,6 +1,8 @@
 using System.Reflection;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -22,7 +24,13 @@ if(!app.Environment.IsDevelopment()){
 }
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
+Console.WriteLine(Path.Combine(Directory.GetCurrentDirectory()));
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),@"images")),
+    RequestPath = new Microsoft.AspNetCore.Http.PathString("/images")
+});
 app.UseRouting();
 app.MapBlazorHub();
 app.MapControllers();

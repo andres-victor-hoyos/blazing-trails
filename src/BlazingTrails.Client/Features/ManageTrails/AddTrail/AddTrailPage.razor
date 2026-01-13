@@ -1,0 +1,69 @@
+@inject IMediator Mediator
+@page "/add-trail"
+@using System.Reflection.Metadata.Ecma335
+@using System.Security.Cryptography.X509Certificates
+@using Microsoft.IdentityModel.Tokens
+@using System.Reflection
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Home</a>
+        </li>
+        <li class="breadcrumb-item active" area-current="page">Add Trail</li>
+    </ol>
+</nav>
+
+<h3 class="mt-5 mb-4">Add a trail</h3>
+@if (_submitSuccessful)
+{
+    <SuccessAlert Message="@TRAIL_SUBMITED_SUCCESSFULLY"></SuccessAlert>
+}
+else if (_errorMessage is not null)
+{
+    <ErrorAlert Message="@_errorMessage"></ErrorAlert>
+}
+
+<TrailForm @ref="_trailForm" OnSubmit="SubmitNewTrail" />
+
+@code {
+    private static readonly string TRAIL_SUBMITED_SUCCESSFULLY = "Your trail has been submitted successfully!";
+    private static readonly string THERE_WAS_A_PROBLEM_SAVING_TRAIL = "There was a problem saving your trail.";
+    private static readonly string YOUR_TRAIL_WAS_SAVED_BUT_THERE_WAS_PROBLEM_UPLOADING_IMAGE = "Your trail was saved, but there was a problem uploading the image.";
+    private bool _submitSuccessful;
+    private string? _errorMessage;
+    private TrailForm _trailForm = default!;
+    private async Task SubmitNewTrail(TrailDto trail, IBrowserFile? image)
+    {
+        var response = await Mediator.Send(new AddTrailRequest(trail));
+        if (response.TrailId == -1)
+        {
+            _submitSuccessful = false;
+            _errorMessage = THERE_WAS_A_PROBLEM_SAVING_TRAIL;
+            StateHasChanged();
+            return;
+        }
+        if (image is null)
+        {
+            _submitSuccessful = true;
+            _trailForm.reset();
+            StateHasChanged();
+            return;
+        }
+        _submitSuccessful = await ProcessImage(response.TrailId, image);
+        if (_submitSuccessful)
+            _trailForm.reset();
+        StateHasChanged();
+    }
+
+    private async Task<bool> ProcessImage(int trailId, IBrowserFile image)
+    {
+        var imageUploadResponse = await Mediator.Send(new UploadTrailImageRequest(trailId, image));
+        if (string.IsNullOrWhiteSpace(imageUploadResponse.ImageName))
+        {
+            _errorMessage = YOUR_TRAIL_WAS_SAVED_BUT_THERE_WAS_PROBLEM_UPLOADING_IMAGE;
+            return false;
+        }
+        return true;
+    }
+}

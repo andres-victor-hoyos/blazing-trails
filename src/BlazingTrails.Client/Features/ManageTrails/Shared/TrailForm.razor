@@ -1,42 +1,3 @@
-@inject IMediator Mediator
-@page "/add-trail"
-@using System.Reflection.Metadata.Ecma335
-@using System.Security.Cryptography.X509Certificates
-@using Microsoft.IdentityModel.Tokens
-
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="/">Home</a>
-        </li>
-        <li class="breadcrumb-item active" area-current="page">Add Trail</li>
-    </ol>
-</nav>
-
-<h3 class="mt-5 mb-4">Add a trail</h3>
-@if (_submitSuccessful)
-{
-    <div class="alert alert-success" role="alert">
-        <svg xmls="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-check-circle-fill"
-            viewBox="0 0 16 16">
-            <path fill-rule="evenodd"
-                d="M16 8A8 8 0  1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-        </svg>
-        @TRAIL_SUBMITED_SUCCESSFULLY
-    </div>
-}
-else if (_errorMessage is not null)
-{
-    <div class="alert alert-danger" role="alert">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-x-circle-fill"
-            viewBox="0 0 16 16">
-            <path fill-rule="evenodd"
-                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.50 0 0-.708-.708L8 7.293 5.354 4.646z" />
-        </svg>
-        @_errorMessage
-    </div>
-}
-
 <EditForm EditContext="_editContext" OnValidSubmit="SubmitForm">
     <FluentValidationValidator />
     <FormSection Title="Basic Details"
@@ -106,10 +67,10 @@ else if (_errorMessage is not null)
                             fill="currentColor" xmls="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd"
                                 d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1
-                                                                                                         0-.708.708L7.293 8l-2.647 2.646a.5.5
-                                                                                                        0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0
-                                                                                                        .708-.708L8.707 8l2.647-2.646a.5.5 0 0
-                                                                                                    0-.708-.708L8 7.293 5.354 4.646z" />
+                                                                                                                 0-.708.708L7.293 8l-2.647 2.646a.5.5
+                                                                                                                0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0
+                                                                                                                .708-.708L8.707 8l2.647-2.646a.5.5 0 0
+                                                                                                            0-.708-.708L8 7.293 5.354 4.646z" />
                         </svg>
                     </button>
                 </div>
@@ -134,14 +95,12 @@ else if (_errorMessage is not null)
 </EditForm>
 
 @code {
-    private static readonly string TRAIL_SUBMITED_SUCCESSFULLY = "Your trail has been submitted successfully!";
-    private static readonly string THERE_WAS_A_PROBLEM_SAVING_TRAIL = "There was a problem saving your trail.";
-    private static readonly string YOUR_TRAIL_WAS_SAVED = "Your trail was saved.";
     private TrailDto _trail = default!;
-    private bool _submitSuccessful;
-    private string? _errorMessage;
     private EditContext _editContext = default!;
     private IBrowserFile? _trailImage;
+
+    [Parameter]
+    public required Func<TrailDto, IBrowserFile?, Task> OnSubmit { get; set; }
 
     protected override void OnInitialized()
     {
@@ -150,54 +109,23 @@ else if (_errorMessage is not null)
 
     private async Task SubmitForm()
     {
-        var response = await Mediator.Send(new AddTrailRequest(_trail));
-        if (await FormContainError())
-        {
-            ShowErrors();
-            return;
-        }
-        if(_trailImage is null){
-            _submitSuccessful = true;
-            reset();
-            return;
-        }
-        await ProcessImage(response.TrailId);
+        await OnSubmit(_trail, _trailImage);
     }
 
-    private void init(){
-        reset();
-    }
-    private void reset()
+    private void init()
     {
-        _trail = new TrailDto();
+         _trail = new TrailDto();
         _editContext = new EditContext(_trail);
         _editContext.SetFieldCssClassProvider(new BoostrapCssClassProvider());
         _trailImage = null;
     }
-
-    private async Task<bool> FormContainError()
+    public void reset()
     {
-        var response = await Mediator.Send(new AddTrailRequest(_trail));
-        return response.TrailId == -1;
+       init();
     }
 
-    private void ShowErrors()
-    {
-        _errorMessage = THERE_WAS_A_PROBLEM_SAVING_TRAIL;
-        _submitSuccessful = false;
-    }
     private void LoadTrailImage(InputFileChangeEventArgs e)
     {
         _trailImage = e.File;
-    }
-
-    private async Task ProcessImage(int trailid){
-        var imageUploadResponse = await Mediator.Send(new UploadTrailImageRequest(trailid, _trailImage!));
-        Console.WriteLine(imageUploadResponse.ImageName);
-        if(string.IsNullOrWhiteSpace(imageUploadResponse.ImageName)){
-            _errorMessage = YOUR_TRAIL_WAS_SAVED;
-        }
-        _submitSuccessful = true;
-        reset();
     }
 }

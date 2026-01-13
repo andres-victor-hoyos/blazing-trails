@@ -1,8 +1,5 @@
-using System.Dynamic;
 using MediatR;
 using Microsoft.AspNetCore.Components.Forms;
-
-namespace BlazingTrails.Client.Features.ManageTrails;
 
 public record UploadTrailImageRequest(int TrailId, IBrowserFile File):IRequest<UploadTrailImageRequest.Response>
 {

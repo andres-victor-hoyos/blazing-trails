@@ -1,4 +1,3 @@
-@using System.Diagnostics.CodeAnalysis
 @inherits InputBase<int>
 
 <div class="input-time">
@@ -15,8 +14,7 @@
 @code {
     private int _hours;
     private int _minutes;
-    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out int result,
-    [NotNullWhen(false)] out string validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, out int result, out string validationErrorMessage)
     {
         throw new NotImplementedException();
     }

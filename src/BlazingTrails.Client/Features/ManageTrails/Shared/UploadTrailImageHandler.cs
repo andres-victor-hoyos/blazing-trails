@@ -1,12 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.Marshalling;
-using System.Threading.Tasks;
 using MediatR;
-
-namespace BlazingTrails.Client.Features.ManageTrails;
-
 public class UploadTrailImageHandler : IRequestHandler<UploadTrailImageRequest, UploadTrailImageRequest.Response>
 {
     private readonly HttpClient _httpClient;

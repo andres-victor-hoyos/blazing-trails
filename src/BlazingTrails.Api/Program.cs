@@ -1,6 +1,5 @@
 using System.Reflection;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
@@ -15,10 +14,15 @@ builder.Services.AddDbContext<BlazingTrailsContext>(
         options.UseSqlite(builder.Configuration.GetConnectionString("BlazingTrailsContext"));
     }
 );
-builder.Services.AddMediatR(cfg=>cfg.RegisterServicesFromAssembly(Assembly.GetEntryAssembly()!));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetEntryAssembly()!));
 builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddHttpLogging(cfg =>
+{
+   cfg.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All; 
+});
 var app = builder.Build();
-if(!app.Environment.IsDevelopment()){
+if (!app.Environment.IsDevelopment())
+{
     app.UseExceptionHandler();
     app.UseHsts();
 }
@@ -28,14 +32,12 @@ Console.WriteLine(Path.Combine(Directory.GetCurrentDirectory()));
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions()
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),@"images")),
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"images")),
     RequestPath = new Microsoft.AspNetCore.Http.PathString("/images")
 });
 app.UseRouting();
+app.UseHttpLogging();
 app.MapBlazorHub();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
-Console.WriteLine("Server was started");
-
 app.Run();

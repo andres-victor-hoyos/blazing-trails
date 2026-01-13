@@ -2,8 +2,6 @@ using Ardalis.ApiEndpoints;
 using BlazingTrails.Api.Persistence.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BlazingTrails.Api.Features.ManageTrails;
-
 public class AddTrailEndPoint : EndpointBaseAsync.WithRequest<AddTrailRequest>.WithResult<int>
 {
     private readonly BlazingTrailsContext _database;
@@ -15,8 +13,6 @@ public class AddTrailEndPoint : EndpointBaseAsync.WithRequest<AddTrailRequest>.W
     [HttpPost(AddTrailRequest.RouteTemplate)]
     public override async Task<int> HandleAsync(AddTrailRequest request, CancellationToken cancellationToken = default)
     {
-
-
         var trail = new Trail
         {
             Name = request.Trail.Name,

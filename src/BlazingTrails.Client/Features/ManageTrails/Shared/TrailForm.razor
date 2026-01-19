@@ -1,3 +1,5 @@
+@using System.Runtime.InteropServices
+@using System.ComponentModel
 <EditForm EditContext="_editContext" OnValidSubmit="SubmitForm">
     <FluentValidationValidator />
     <FormSection Title="Basic Details"
@@ -20,8 +22,20 @@
         </FormFieldSet>
         <FormFieldSet>
             <label for="trailImage" class="font-weight-bold text-secondary">Image</label>
-            <InputFile onchange="LoadTrailImage" class="form-control-file" id="trailImage" accept=".jpg,.png,jpeg">
-            </InputFile>
+            @if (string.IsNullOrEmpty(_trail.Image))
+            {
+                <InputFile onchange="LoadTrailImage" class="form-control-file" id="trailImage" accept=".jpg,.png,jpeg">
+                </InputFile>
+            }
+            else{
+                <div class="card bg-dark text-white">
+                    <img src="/images/@_trail.Image" />
+                    <div class="card-img-overlay">
+                        <button class="btn btn-primary btn-sm" @onclick="RemoveTrailImage">Remove</button>
+                    </div>
+                </div>
+            }
+
         </FormFieldSet>
     </FormSection>
 
@@ -67,10 +81,10 @@
                             fill="currentColor" xmls="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd"
                                 d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1
-                                                                                                                 0-.708.708L7.293 8l-2.647 2.646a.5.5
-                                                                                                                0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0
-                                                                                                                .708-.708L8.707 8l2.647-2.646a.5.5 0 0
-                                                                                                            0-.708-.708L8 7.293 5.354 4.646z" />
+                                                                                                                                 0-.708.708L7.293 8l-2.647 2.646a.5.5
+                                                                                                                                0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0
+                                                                                                                                .708-.708L8.707 8l2.647-2.646a.5.5 0 0
+                                                                                                                            0-.708-.708L8 7.293 5.354 4.646z" />
                         </svg>
                     </button>
                 </div>
@@ -95,16 +109,36 @@
 </EditForm>
 
 @code {
-    private TrailDto _trail = default!;
+    [Parameter]
+    public TrailDto? Trail { get; set; }
+    private TrailDto _trail = new TrailDto();
     private EditContext _editContext = default!;
     private IBrowserFile? _trailImage;
 
     [Parameter]
     public required Func<TrailDto, IBrowserFile?, Task> OnSubmit { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        init();
+        _editContext = new EditContext(_trail);
+        _editContext.SetFieldCssClassProvider(new BoostrapCssClassProvider());
+        if (Trail is not null)
+        {
+            _trail.Id = Trail.Id;
+            _trail.Name = Trail.Name;
+            _trail.Description = Trail.Description;
+            _trail.Location = Trail.Location;
+            _trail.TimeInMinutes = Trail.TimeInMinutes;
+            _trail.Length = Trail.Length;
+            _trail.Image = Trail.Image;
+            _trail.ImageAction = Trail.ImageAction;
+            _trail.Route.Clear();
+            _trail.Route.AddRange(Trail.Route.Select(r => new TrailDto.RouteInstruction()
+            {
+                Stage = r.Stage,
+                Description = r.Description
+            }));
+        }
     }
 
     private async Task SubmitForm()
@@ -112,20 +146,22 @@
         await OnSubmit(_trail, _trailImage);
     }
 
-    private void init()
+    public void reset()
     {
-         _trail = new TrailDto();
+        _trail = new TrailDto();
         _editContext = new EditContext(_trail);
         _editContext.SetFieldCssClassProvider(new BoostrapCssClassProvider());
         _trailImage = null;
-    }
-    public void reset()
-    {
-       init();
     }
 
     private void LoadTrailImage(InputFileChangeEventArgs e)
     {
         _trailImage = e.File;
     }
+    private void RemoveTrailImage(MouseEventArgs args)
+    {
+        _trail.Image= null;
+        _trail.ImageAction = ImageAction.Remove;
+    }
+
 }

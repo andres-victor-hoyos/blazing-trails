@@ -1,0 +1,128 @@
+@page "/edit-trail/{TrailId:int}"
+@using System.Runtime.CompilerServices
+@inject IMediator Mediator
+<PageTitle>Edit Trail - Blazing Trails</PageTitle>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Trail</li>
+    </ol>
+</nav>
+
+@if (_isLoading)
+{
+    <p>@LOADING_MESSAGE</p>
+}
+else
+{
+    <h3 class="mt-5 mb-4">Editing trail:@_trail.Name</h3>
+    if (_submitSuccessful)
+    {
+        <SuccessAlert Message="@SUCCESS_MESSAGE"></SuccessAlert>
+    }
+    else if(_errorMessage is not null)
+    {
+        <ErrorAlert Message="@_errorMessage"></ErrorAlert>
+    }
+}
+<TrailForm Trail="_trail" OnSubmit="SubmitEditTrail" />
+
+@code {
+    private static string LOADING_MESSAGE = "Loading Trail";
+    private static string SUCCESS_MESSAGE = "Your trail has been edited successfully!!!";
+    private static string LOADING_ERROR = "There was a problem loading trail.";
+    private static string THE_WAS_PROBLEM_SAVING_YOUR_TRAIL = "The was problem saving your trail.";
+    private static string YOUR_TRAIL_WAS_SAVED_BUT_THERE_WAS_A_PROBLEM_UPLOADING_THE_IMAGE = "Your trail was saved, but there was a problem uploading the image.";
+    private static string THERE_WAS_A_PROBLEM_SAVING_TRAIL = "There was a problem loading the trail.";
+    private bool _isLoading;
+    private bool _submitSuccessful;
+    private TrailDto _trail = new TrailDto();
+    private string _errorMessage = default!;
+
+    [Parameter]
+    public int TrailId { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isLoading = true;
+        var response = await Mediator.Send(new GetTrailRequest(TrailId));
+        if (response is null)
+        {
+            _errorMessage = LOADING_ERROR;
+        }
+        else
+        {
+            initTrail(response!);
+        }
+        _isLoading = false;
+    }
+    private async Task SubmitEditTrail(TrailDto trail, IBrowserFile? image)
+    {
+        var response = await Mediator.Send(new EditTrailRequest(trail));
+        if (!response.IsSuccess)
+        {
+            _submitSuccessful = false;
+            _errorMessage = THE_WAS_PROBLEM_SAVING_YOUR_TRAIL;
+        }
+        _trail.Name = trail.Name;
+        _trail.Description = trail.Description;
+        _trail.Length = trail.Length;
+        _trail.Location = trail.Location;
+        _trail.Route.Clear();
+        _trail.Route.AddRange(trail.Route.Select(t => new TrailDto.RouteInstruction()
+        {
+            Stage = t.Stage,
+            Description = t.Description
+        }));
+        _submitSuccessful = true;
+        if (trail.ImageAction == ImageAction.Add)
+        {
+            _submitSuccessful = await ProcessImage(trail.Id, image!);
+        }
+        if (trail.ImageAction == ImageAction.Remove)
+            _trail.Image = String.Empty;
+        StateHasChanged();
+    }
+
+    public void initTrail(GetTrailRequest.Response? response)
+    {
+        if (response is not null)
+        {
+            _trail.Id = TrailId;
+            _trail.Name = response.Trail.Name;
+            _trail.Description = response.Trail.Description;
+            _trail.Location = response.Trail.Location;
+            _trail.Length = response.Trail.Length;
+            _trail.Image = response.Trail.Image;
+            _trail.TimeInMinutes = response.Trail.TimeInMinutes;
+            _trail.AssignNewRoute(response
+            .Trail.RouteInstructions
+            .Select((t) =>
+            new TrailDto.RouteInstruction()
+            {
+                Stage = t.Stage,
+                Description = t.Description!
+            }));
+        }
+        else
+        {
+            _errorMessage = THERE_WAS_A_PROBLEM_SAVING_TRAIL;
+        }
+    }
+
+    private async Task<bool> ProcessImage(int trailId, IBrowserFile image)
+    {
+        var imageUploadResponse = await Mediator.Send(new UploadTrailImageRequest(trailId, image));
+        if (string.IsNullOrWhiteSpace(imageUploadResponse.ImageName))
+        {
+            _errorMessage = YOUR_TRAIL_WAS_SAVED_BUT_THERE_WAS_A_PROBLEM_UPLOADING_THE_IMAGE;
+            return false;
+        }
+        _trail.Image = imageUploadResponse.ImageName;
+        return true;
+
+    }
+}

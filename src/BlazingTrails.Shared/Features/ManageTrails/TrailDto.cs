@@ -11,7 +11,15 @@ public class TrailDto
     public string Description { get; set; } = default!;
     public string Location { get; set; } = default!;
     public int TimeInMinutes { get; set; }
+    public string? Image {get;set;}
+    public ImageAction ImageAction {get; set;}
     public List<RouteInstruction> Route { get; set; } = new List<RouteInstruction>();
+
+    public void AssignNewRoute(IEnumerable<RouteInstruction> route)
+    {
+        this.Route.Clear();
+        this.Route.AddRange(route);
+    }
 
     public class RouteInstruction
     {
@@ -41,4 +49,11 @@ public class RouteInstructionValidator : AbstractValidator<TrailDto.RouteInstruc
         RuleFor(x => x.Stage).NotEmpty().WithMessage("Please enter a stage");
         RuleFor(x => x.Description).NotEmpty().WithMessage("Please enter a description");
     }
+}
+
+public enum ImageAction
+{
+    None,
+    Add,
+    Remove
 }

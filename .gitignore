@@ -376,3 +376,6 @@ staticwebassets/
 
 # Local SQLite database (do not version)
 /src/BlazingTrails.Api/Persistence/Data/blazingtrails.db
+
+# 
+/src/BlazingTrails.Api/images/*

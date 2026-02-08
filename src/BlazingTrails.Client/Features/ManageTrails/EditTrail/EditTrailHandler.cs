@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using BlazingTrails.Features.ManageTrails.EditTrail;
 using MediatR;
 
 class EditTrailHandler : IRequestHandler<EditTrailRequest, EditTrailRequest.Response>

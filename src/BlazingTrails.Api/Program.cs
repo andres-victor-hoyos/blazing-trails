@@ -28,7 +28,6 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
-Console.WriteLine(Path.Combine(Directory.GetCurrentDirectory()));
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions()
 {

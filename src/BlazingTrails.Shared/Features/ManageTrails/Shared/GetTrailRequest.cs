@@ -1,4 +1,5 @@
 using MediatR;
+namespace BlazingTrails.Shared.Features.ManageTrails.Shared;
 
 public record GetTrailRequest(int TrailId) : IRequest<GetTrailRequest.Response>
 {

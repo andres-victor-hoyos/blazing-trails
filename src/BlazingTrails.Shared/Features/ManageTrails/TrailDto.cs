@@ -1,6 +1,6 @@
-using FluentValidation;
-
 namespace BlazingTrails.Shared.Features.ManageTrails;
+
+using FluentValidation;
 
 public class TrailDto
 {

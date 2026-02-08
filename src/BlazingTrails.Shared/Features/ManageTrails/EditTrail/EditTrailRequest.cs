@@ -1,3 +1,5 @@
+namespace BlazingTrails.Features.ManageTrails.EditTrail;
+
 using BlazingTrails.Shared.Features.ManageTrails;
 using FluentValidation;
 using MediatR;

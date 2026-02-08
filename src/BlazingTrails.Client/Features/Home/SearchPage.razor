@@ -2,7 +2,7 @@
 @using System.IO.Compression
 @using System.Runtime.CompilerServices
 @using System.Data
-@inject HttpClient Http;
+@inject Mediator Mediator;
 @inject NavigationManager NavManager
 <PageTitle>Search Trails - Blazing Trails</PageTitle>
 
@@ -50,14 +50,24 @@ else
     {
         try
         {
-            var allTrails = await Http.GetFromJsonAsync<IEnumerable<Trail>>("trails/trail-data.json");
-            searchResults = allTrails!.Where(x => x.Contains(SearchTerm!));
+            var response = await Mediator.Send(new GetTrailsRequest());
+            var allTrails = response.Trails.Select(x => new Trail
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Image = x.Image,
+                Description = x.Description,
+                Location = x.Location,
+                Length = x.Length,
+                TimeInMinutes = x.TimeInMinutes
+            });
+            searchResults = allTrails.Where(x => x.Contains(SearchTerm));
             cachedSearchResults = searchResults;
-
+            UpdateFilters();
         }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"There was a problem loading trail data:{ex.Message}");
+            Console.WriteLine($"There was a problem loading trail data:", ex.Message);
         }
     }
 

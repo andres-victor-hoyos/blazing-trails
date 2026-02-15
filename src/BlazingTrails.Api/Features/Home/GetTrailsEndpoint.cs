@@ -23,7 +23,8 @@ public class GetTrailsEndpoint : EndpointBaseAsync
             trail.Location,
             trail.TimeInMinutes,
             trail.Length,
-            trail.Description
+            trail.Description, 
+            trail.Owner
         )));   
 
         return Ok(Response);     

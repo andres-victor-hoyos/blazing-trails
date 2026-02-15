@@ -12,6 +12,7 @@ public class Trail
     public required string Location { get; set; }
     public int TimeInMinutes {get;set;}
     public int Length{get;set;}
+    public required string Owner {get; set;} = String.Empty;
     public ICollection<RouteInstruction> Route{get;set;} = new List<RouteInstruction>();
 }
 
@@ -23,5 +24,6 @@ public class TrailConfig : IEntityTypeConfiguration<Trail>
         builder.Property(x=> x.Location).IsRequired();
         builder.Property(x => x.TimeInMinutes).IsRequired();
         builder.Property(x => x.Length).IsRequired();
+        builder.Property(x=>x.Owner).IsRequired();
     }
 }

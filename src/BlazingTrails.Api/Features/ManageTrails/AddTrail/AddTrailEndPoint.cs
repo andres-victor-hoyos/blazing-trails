@@ -19,7 +19,8 @@ public class AddTrailEndPoint : EndpointBaseAsync.WithRequest<AddTrailRequest>.W
             Description = request.Trail.Description,
             Location = request.Trail.Location,
             TimeInMinutes = request.Trail.TimeInMinutes,
-            Length = request.Trail.Length      
+            Length = request.Trail.Length,
+            Owner = request.Trail.Owner   
         };
 
         trail.Route = request.Trail.Route.Select(x => new RouteInstruction

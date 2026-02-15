@@ -28,6 +28,7 @@ public class GetTrailEndpoint : EndpointBaseAsync.WithRequest<int>.WithActionRes
             trail.TimeInMinutes,
             trail.Length,
             trail.Description,
+            trail.Owner,
             trail.Route.Select(ri => new GetTrailRequest.RouteInstruction(ri.Id, ri.Stage, ri.Description))));
         return Ok(response);
     }
